@@ -2,7 +2,8 @@ import re
 import linecache
 import os
 # 本程序用于将widerface数据集中label部分分离出来并且重新保存
-FILEDIR = "E:\Python_Files\TryWiderFace\Dataset\labels\\"
+FILEDIR = "G:/baiduyun/faceresource/wider/wider_face_split/"
+FILEOUT = "G:/baiduyun/faceresource/wider/WIDER_train/images/"
 file = open(FILEDIR+'wider_face_train_bbx_gt.txt', 'r')
 
 def count_lines(file):
@@ -18,6 +19,7 @@ def count_lines(file):
 lines = count_lines(file)
 
 for i in range(lines):
+
     line = linecache.getline(FILEDIR+'wider_face_train_bbx_gt.txt',i)
     if re.search('jpg', line):
         position = line.index('/')
@@ -37,12 +39,11 @@ for i in range(lines):
             po_h = box_line.index(' ', po_w + 1)
             h = box_line[po_w:po_h]
             coordinates = x1 + y1 + w + h
-            if not(os.path.exists(FILEDIR + "wider_face_train\\" + folder_name)):
-                os.makedirs(FILEDIR + "wider_face_train\\" + folder_name)
-            with open(FILEDIR + "wider_face_train\\"+ folder_name + "\\" + file_name + ".txt", 'a') as f:
+            if not(os.path.exists(FILEOUT + "wider_face_train/" + folder_name)):
+                os.makedirs(FILEOUT + "wider_face_train/" + folder_name)
+            with open(FILEOUT + "wider_face_train/"+ folder_name + "/" + file_name + ".txt", 'a') as f:
                 f.write(coordinates + "\n")
         i += i + j + 1
-
 
 
 
