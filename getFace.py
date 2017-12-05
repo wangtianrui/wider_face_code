@@ -1,6 +1,7 @@
 import scipy.io
 import os
 import cv2
+
 noicecount = 0
 count = 0
 TIMES = 0
@@ -70,6 +71,7 @@ def FindAddress(step):
     return string
 
 
+
 for step in range(61):
     log = open("log.txt", 'w')
     # i遍历FileName[step][0],j遍历FileValue[step][0]，p遍历FileOcc[step][0]
@@ -83,31 +85,34 @@ for step in range(61):
         num = num + 1
         print(newstring)
         img = cv2.imread(newstring)
-        if (img == None):
+        if (img.any() == None):
             continue
         FaceCor = []
-        for k in range(j[0].shape[0]):
+        for k in range(j[0].shape[0]):  # 人头数
             if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
                 continue
             crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
                    int(j[0][k][0]):int(j[0][k][0]) + int(j[0][k][2])]
             count += 1
-            filename = "E:/photo2/face" + str(count) + ".jpg"
+            filename = "F:/Traindata/facedata/activedata/" + str(count) + ".jpg"
             cv2.imwrite(filename, crop)
             print(count)
-            FaceCor = FaceCor + [j[0][k]]
-        print(FaceCor)
+            '''
+            FaceCor = FaceCor + [j[0][k]]  # j[0][k]单个脸的位子
+        #print(FaceCor)#人脸集合
         if (FaceCor != []):
             picNum = 0
+            #print("test,shape:",img.shape[1], img.shape[0])
             RandCor = RandomClipPhoto(FaceCor, img.shape[1], img.shape[0])
             for w in range(len(RandCor)):
                 if (picNum == 4):
                     break
                 picNum += 1
                 crop2 = img[RandCor[w][1]:RandCor[w][1] + RandCor[w][3], RandCor[w][0]:RandCor[w][0] + RandCor[w][2]]
-                filename2 = "E:/random2/noice" + str(noicecount) + ".jpg"
+                filename2 = "F:/Traindata/facedata/negativedata/" + str(noicecount) + ".jpg"
                 noicecount += 1
-                cv2.imwrite(filename2, crop2)
+                # cv2.imwrite(filename2, crop2)
+            '''
         TIMES += 1  # the processing image num
     log.write(i[0][0] + "  finish")
     log.close()
