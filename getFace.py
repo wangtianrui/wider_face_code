@@ -2,9 +2,7 @@ import scipy.io
 import os
 import cv2
 
-noicecount = 0
 count = 0
-TIMES = 0
 index = 0
 picNum = 0
 RandCor = []
@@ -15,170 +13,97 @@ FileName = data['file_list']
 FileValue = data['face_bbx_list']
 FileOcc = data['occlusion_label_list']
 num = 0
-'''
-for k in range(61):
-    for x in FileOcc[k][0]:
-        print(x[0][0])
-
-for x in FileName[0][0]:
-    print (x[0][0])
-'''
 
 
-def file_name(step):
-    # print(step)
+def file_name(temp):
+    # print(temp)
     file_dir = 'G:/baiduyun/faceresource/wider/WIDER_train/images/'
-    if (step >= 10):
+    if (temp >= 10):
         for root, dirs, files in os.walk(file_dir):
             # print(root)  # 当前目录路径
             for f in dirs:
-                if (step == int(f[:2])):
-                    # print("test1:", f[:2])
-                    file_dir = file_dir + f + "/";
-                '''
-                if (f[1] == '-'):
-                    print(f[0])
-                else:
-                    print(f[:2])  # 当前路径下所有子目录
-                    # print(files)  # 当前路径下所有非目录子文件
-                    # filelist = os.walk(file_dir)
-                    # print(filelist[])
-                '''
+                if (f[1] != '-'):
+                    if (temp == int(f[:2])):
+                        #print("test1:", f[:2])
+                        file_dir = file_dir + f + "/";
+
     else:
         # print("小于10")
         for root, dirs, files in os.walk(file_dir):
             # print(root)  # 当前目录路径
             for f in dirs:
                 # print("printftest:",f[0])
-                if (step == int(f[0]) and f[1] == '-'):
+                if (temp == int(f[0]) and f[1] == '-'):
                     # print("test2:", f[0])
                     file_dir = file_dir + f + "/";
-                '''
-                if (f[1] == '-'):
-                    print(f[0])
-                else:
-                    print(f[:2])  # 当前路径下所有子目录
-                    # print(files)  # 当前路径下所有非目录子文件
-                    # filelist = os.walk(file_dir)
-                    # print(filelist[])
-                '''
+
+    if(file_dir == 'G:/baiduyun/faceresource/wider/WIDER_train/images/'):
+        file_dir = 'error'
     return file_dir
 
 
 def FindAddress(step):
+    if (step < 2):
+        temp = step
+    elif (step >= 2 and step <= 11):
+        temp = 10 + step - 2
     # print("test3:",step)
-    string = file_name(step)
+    elif (step == 12):
+        temp = 2
+    elif (step > 12 and step <= 22):
+        temp = 20 + step - 13
+    elif (step == 23):
+        temp = 3
+    elif (step > 23 and step <= 33):
+        temp = 30 + step - 24
+    elif (step == 34):
+        temp = 4
+    elif (step > 34 and step <= 44):
+        temp = 40 + step - 35
+    elif (step == 45):
+        temp = 5
+    elif (step > 45 and step <= 55):
+        temp = 50 + step - 46
+    elif (step == 56):
+        temp = 6
+    elif (step > 56 and step <= 66):
+        temp = 60 + step - 57
+    string = file_name(temp)
+    #print(step)
     return string
 
 
-
 for step in range(61):
-    log = open("log.txt", 'w')
+    print(step)
+    #log = open("log.txt", 'w')
     # i遍历FileName[step][0],j遍历FileValue[step][0]，p遍历FileOcc[step][0]
     for (i, j, p) in zip(FileName[step][0], FileValue[step][0], FileOcc[step][0]):
         # print("test4", step)
+        #
+        #print("THE k is", step)
         newstring = FindAddress(step)
-        # print("THE k is", step)
-        if (newstring == 0):
+        #print("findAddok")
+        if (newstring == 'error'):
+            print("string error continue")
             continue
+        #print("readok")
         newstring = newstring + i[0][0] + '.jpg'
         num = num + 1
-        print(newstring)
-        img = cv2.imread(newstring)
-        if (img.any() == None):
+        print(newstring,num)
+        if (os.path.exists(newstring) == False):
+            print("path error")
             continue
-        FaceCor = []
-        for k in range(j[0].shape[0]):  # 人头数
+        img = cv2.imread(newstring)
+        print("readok")
+        #FaceCor = []
+        for k in range(j[0].sgit hape[0]):  # 人头数
             if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
                 continue
             crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
                    int(j[0][k][0]):int(j[0][k][0]) + int(j[0][k][2])]
             count += 1
+            print("write")
             filename = "F:/Traindata/facedata/activedata/" + str(count) + ".jpg"
             cv2.imwrite(filename, crop)
-            print(count)
-            '''
-            FaceCor = FaceCor + [j[0][k]]  # j[0][k]单个脸的位子
-        #print(FaceCor)#人脸集合
-        if (FaceCor != []):
-            picNum = 0
-            #print("test,shape:",img.shape[1], img.shape[0])
-            RandCor = RandomClipPhoto(FaceCor, img.shape[1], img.shape[0])
-            for w in range(len(RandCor)):
-                if (picNum == 4):
-                    break
-                picNum += 1
-                crop2 = img[RandCor[w][1]:RandCor[w][1] + RandCor[w][3], RandCor[w][0]:RandCor[w][0] + RandCor[w][2]]
-                filename2 = "F:/Traindata/facedata/negativedata/" + str(noicecount) + ".jpg"
-                noicecount += 1
-                # cv2.imwrite(filename2, crop2)
-            '''
-        TIMES += 1  # the processing image num
-    log.write(i[0][0] + "  finish")
-    log.close()
-
-"""
-data=scipy.io.loadmat("G:/baiduyun/faceresource/wider/wider_face_split/wider_face_train.mat")
-#data['file_list']里面的file_list就是标签的名字。由于data是字典格式。所以可以用data.keys()去查询一下它所有标签的名字。
-FileName=data['file_list']
-FileValue=data['face_bbx_list']
-FileOcc=data['occlusion_label_list']
-#FileName[n][x][k][y]中，n是第n个图像集（比方这里有共61有类），x是只能取0，因为file_list只有1列。k是第k个图片。y也只能取0.
-print(FileName[0][0][0][0])
-num = 0
-for k in range(61):
-    for x in FileName[k][0]:
-        num = num + 1
-
-        print (x[0][0],num)
-
-for x in FileName[0][0]:
-    print (x[0][0])
-
-
-
-def FindAddress(step):
-    string = imagePath
-    return string
-
-
-for step in range(61):
-    log = open("log.txt", 'w')
-    # i遍历FileName[step][0],j遍历FileValue[step][0]，p遍历FileOcc[step][0]
-    for (i, j, p) in zip(FileName[step][0], FileValue[step][0], FileOcc[step][0]):
-        newstring = FindAddress(step)
-        print("THE k is", step)
-        if (newstring == 0):
-            continue
-        newstring = newstring + i[0][0] + '.jpg'
-        print(newstring)
-        img = cv2.imread(newstring)
-        if (img == None):
-            continue
-        FaceCor = []
-        for k in range(j[0].shape[0]):
-            if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
-                continue
-            crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
-                   int(j[0][k][0]):int(j[0][k][0]) + int(j[0][k][2])]
-            count += 1
-            filename = "E:/photo2/face" + str(count) + ".jpg"
-            cv2.imwrite(filename, crop)
-            print(count)
-            FaceCor = FaceCor + [j[0][k]]
-        print(FaceCor)
-        if (FaceCor != []):
-            picNum = 0
-            RandCor = RandomClipPhoto(FaceCor, img.shape[1], img.shape[0])
-            for w in range(len(RandCor)):
-                if (picNum == 4):
-                    break
-                picNum += 1
-                crop2 = img[RandCor[w][1]:RandCor[w][1] + RandCor[w][3], RandCor[w][0]:RandCor[w][0] + RandCor[w][2]]
-                filename2 = "E:/random2/noice" + str(noicecount) + ".jpg"
-                noicecount += 1
-                cv2.imwrite(filename2, crop2)
-        TIMES += 1  # the processing image num
-    log.write(i[0][0] + "  finish")
-    log.close()
-"""
+        print(step)
+        print("writeok")

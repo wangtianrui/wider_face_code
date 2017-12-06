@@ -7,7 +7,7 @@ FileName = data['file_list']
 FileValue = data['face_bbx_list']
 FileOcc = data['occlusion_label_list']
 # FileName[n][x][k][y]中，n是第n个图像集（比方这里有共61有类），x是只能取0，因为file_list只有1列。k是第k个图片。y也只能取0.
-print(FileName[0][0][0][0])
+#print(FileName[10][0][0][0])
 num = 0
 noicecount = 0
 count = 0
@@ -16,15 +16,22 @@ index = 0
 picNum = 0
 RandCor = []
 FaceCor = []
-'''
+
 for k in range(61):
-    for x in FileOcc[k][0]:
-        print(x[0][0])
+    for x in FileName[k][0][0][0]:
+        print(x)
 
-for x in FileName[0][0]:
-    print (x[0][0])
+'''
+for x in FileName:
+    print (x)
+     G:/SavedPictures/timg.jpg
 '''
 
+print(os.path.exists('G:/SavedPictures/timg1.jpg'))
+image = cv2.imread("G:/SavedPictures/timg.jpg")
+#if(image == None):
+    #print("test")
+#print(image)
 
 def file_name(step):
     #print(step)
@@ -33,9 +40,14 @@ def file_name(step):
         for root, dirs, files in os.walk(file_dir):
             # print(root)  # 当前目录路径
             for f in dirs:
-                if (step == int(f[:2])):
-                    #print("test1:", f[:2])
-                    file_dir = file_dir + f + "/";
+                #print(f[1])
+                if(f[1]!='-'):
+                   # print("step:",step,f[:2])
+                    if (step == int(f[:2])):
+                       # print("test1:", f[:2])
+
+                        file_dir = file_dir + f + "/"
+                        #print("testaddfile:", file_dir)
                 '''
                 if (f[1] == '-'):
                     print(f[0])
@@ -50,7 +62,7 @@ def file_name(step):
         for root, dirs, files in os.walk(file_dir):
             # print(root)  # 当前目录路径
             for f in dirs:
-                #print("printftest:",f[0])
+                print("printftest:",f[:2])
                 if (step == int(f[0]) and f[1]== '-'):
                     #print("test2:", f[0])
                     file_dir = file_dir + f + "/";
@@ -72,35 +84,36 @@ def FindAddress(step):
     return string
 
 
-for step in range(61):
+for step in range(10,61):
     log = open("log.txt", 'w')
     # i遍历FileName[step][0],j遍历FileValue[step][0]，p遍历FileOcc[step][0]
     for (i, j, p) in zip(FileName[step][0], FileValue[step][0], FileOcc[step][0]):
         # print("test4", step)
-        '''
+        #step = 12
         newstring = FindAddress(step)
         #print("THE k is", step)
         if (newstring == 0):
             continue
         newstring = newstring + i[0][0] + '.jpg'
         num = num + 1
-        print(newstring, num)
+        #print(newstring, num)
         if (newstring == 0):
             continue
         newstring = newstring + i[0][0] + '.jpg'
         num = num + 1
-        print(newstring)
+        #print(newstring)
+        '''
         img = cv2.imread(newstring)
         if (img == None):
             continue
         FaceCor = []
-        '''
+        
 
         for k in range(j[0].shape[0]):
-            print("test:", j[0][k])
+            #print("test:", j[0][k])
             if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
                 continue
-            '''
+         
             crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
                    int(j[0][k][0]):int(j[0][k][0]) + int(j[0][k][2])]
             count += 1
