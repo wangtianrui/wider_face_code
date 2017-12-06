@@ -96,7 +96,7 @@ for step in range(61):
         img = cv2.imread(newstring)
         print("readok")
         #FaceCor = []
-        for k in range(j[0].sgit hape[0]):  # 人头数
+        for k in range(j[0].shape[0]):  # 人头数
             if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
                 continue
             crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
