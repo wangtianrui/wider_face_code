@@ -19,7 +19,7 @@ def conv(input_image, kernel_size, stride, out_channels, name, padding):
 
 
 def pool(input_image, kernel, stride, name, padding):
-    x = tf.nn.avg_pool(input_image, kernel, strides=stride, padding=padding, name=name)
+    x = tf.nn.max_pool(input_image, ksize=kernel, strides=stride, padding=padding, name=name)
     return x
 
 

@@ -5,7 +5,7 @@ import function
 import net
 import input
 
-NUM_CLASS = 2
+NUM_CLASS = 10
 IMG_W = 208
 IMG_H = 208
 BATCH_SIZE = 16
@@ -13,16 +13,16 @@ LEARNING_RATE = 0.0001
 MAX_STEP = 20000
 CAPACITY = 2000
 
-TRAIN_PATH = ''
+TRAIN_PATH = 'E:/python_programes/datas/cifar10/cifar-10-batches-bin/'
 train_log_dir = './/logs//train//'
-
 
 
 def train():
     with tf.name_scope('input'):
-        train_image_batch, train_labels_batch = input.read_and_decode(TRAIN_PATH, BATCH_SIZE)
-
-        logits = net.alex_net(train_image_batch)
+        # train_image_batch, train_labels_batch = input.read_and_decode_by_tfrecorder(TRAIN_PATH, BATCH_SIZE)
+        train_image_batch, train_labels_batch = input.read_cifar10(TRAIN_PATH, is_train=True, batch_size=16,
+                                                                   shuffle=True)
+        logits = net.alex_net(train_image_batch,NUM_CLASS)
         loss = function.loss(logits=logits, labels=train_labels_batch)
         accuracy = function.accuracy(logits=logits, labels=train_labels_batch)
 
@@ -42,8 +42,10 @@ def train():
 
     try:
         for step in np.arange(MAX_STEP):
-            if coord.should_stop():
+
+            if coord.should_stop() is not None:
                 break
+
             _, train_loss, train_accuracy = sess.run(train_op, loss, accuracy)
             if step % 50 == 0 or step == MAX_STEP:
                 print('***** Step: %d, loss: %.4f, accuracy: %.4f%% *****' % (step, train_loss, train_accuracy))
@@ -58,3 +60,5 @@ def train():
         coord.request_stop()
     coord.join(threads)
     sess.close()
+
+train()
