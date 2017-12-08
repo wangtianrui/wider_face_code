@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def conv(input_image, kernel_size, stride, out_channels, name):
+def conv(input_image, kernel_size, stride, out_channels, name, padding):
     # 得到输入图片的通道数
     input_channels = input_image.get_shape()[-1]
     with tf.variable_scope(name):
@@ -12,14 +12,14 @@ def conv(input_image, kernel_size, stride, out_channels, name):
         b = tf.get_variable(name='biases',
                             shape=[out_channels],
                             initializer=tf.constant_initializer())
-        x = tf.nn.conv2d(input_image, w, stride, padding='SAME', name='conv')
+        x = tf.nn.conv2d(input_image, w, stride, padding=padding, name='conv')
         x = tf.nn.bias_add(x, b, name='bias_add')
         x = tf.nn.relu(x, name='relu')
         return x
 
 
-def pool(input_image, kernel, stride, name):
-    x = tf.nn.avg_pool(input_image, kernel, strides=stride, padding='SAME', name=name)
+def pool(input_image, kernel, stride, name, padding):
+    x = tf.nn.avg_pool(input_image, kernel, strides=stride, padding=padding, name=name)
     return x
 
 
