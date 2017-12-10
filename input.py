@@ -2,7 +2,8 @@ import tensorflow as tf
 import numpy as np
 import os
 
-def read_and_decode_by_tfrecorder(tfrecords_file, batch_size):
+
+def read_and_decode_by_tfrecorder(tfrecords_file, batch_size, shuffle=True):
     filename_queue = tf.train.string_input_producer([tfrecords_file])
 
     reader = tf.TFRecordReader()
@@ -14,18 +15,31 @@ def read_and_decode_by_tfrecorder(tfrecords_file, batch_size):
             'image_raw': tf.FixedLenFeature([], tf.string),
         })
     image = tf.decode_raw(img_features['image_raw'], tf.uint8)
-
-    image = tf.reshape(image, [208, 208])
+    print(image)
+    image = tf.reshape(image, [208, 208, 3])
+    image = tf.cast(image, tf.float32)
     label = tf.cast(img_features['label'], tf.int32)
-    image_batch, label_batch = tf.train.batch([image, label],
-                                              batch_size=batch_size,
-                                              num_threads=64,
-                                              capacity=2000)
-    return image_batch, tf.reshape(label_batch, [batch_size])
+    if shuffle:
+        image_batch, label_batch = tf.train.shuffle_batch(
+            [image, label],
+            batch_size=batch_size,
+            num_threads=64,
+            capacity=20000,
+            min_after_dequeue=3000)
+    else:
+        image_batch, label_batch = tf.train.batch(
+            [image, label],
+            batch_size=batch_size,
+            num_threads=64,
+            capacity=2000)
+    n_classes = 2
+    label_batch = tf.one_hot(label_batch, depth=n_classes)
+    label_batch = tf.cast(label_batch, dtype=tf.int32)
+    label_batch = tf.reshape(label_batch, [batch_size, n_classes])
+    return image_batch, label_batch
 
 
-def read_cifar10(data_dir, is_train, batch_size, shuffle):
-
+def read_cifar10(data_dir, batch_size, shuffle=False, is_train=False):
     img_width = 32
     img_height = 32
     img_depth = 3
