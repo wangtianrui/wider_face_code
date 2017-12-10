@@ -6,7 +6,7 @@ import alex_net
 import input
 import VGG
 import cv2
-
+import model
 NUM_CLASS = 2
 IMG_W = 208
 IMG_H = 208
@@ -31,8 +31,8 @@ def train():
 
         #logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
 
-        # logits = model.inference(train_image_batch,batch_size=BATCH_SIZE,n_classes=NUM_CLASS)
-        logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
+        logits = model.inference(train_image_batch,batch_size=BATCH_SIZE,n_classes=NUM_CLASS)
+        #logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
         print(logits)
         loss = function.loss(logits=logits, labels=train_labels_batch)
         accuracy = function.accuracy(logits=logits, labels=train_labels_batch)
@@ -41,7 +41,9 @@ def train():
         train_op = function.optimize(loss=loss, learning_rate=LEARNING_RATE, global_step=my_global_step)
 
         saver = tf.train.Saver(tf.global_variables())
-        summary_op = tf.summary.merge_all()
+        summary_op = tf.summary.merge_all(
+
+        )
 
         init = tf.global_variables_initializer()
         sess = tf.Session()

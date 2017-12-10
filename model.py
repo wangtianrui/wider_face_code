@@ -1,36 +1,9 @@
-# By @Kevin Xu
-# kevin28520@gmail.com
-# Youtube: https://www.youtube.com/channel/UCVCSn4qQXTDAtGWpWAe4Plw
-#
-
-# The aim of this project is to use TensorFlow to process our own data.
-#    - input_data.py:  read in data and generate batches
-#    - model: build the model architecture
-#    - training: train
-
-# data: cats vs. dogs from Kaggle
-# Download link: https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition/data
-# data size: ~540M
-
-# How to run?
-# 1. run the training.py once
-# 2. call the run_training() in the console to train the model.
-
-
-# %%
 
 import tensorflow as tf
 
 
-# %%
+
 def inference(images, batch_size, n_classes):
-    '''Build the model
-    Args:
-        images: image batch, 4D tensor, tf.float32, [batch_size, width, height, channels]
-    Returns:
-        output tensor with the computed logits, float, [batch_size, n_classes]
-    '''
-    # conv1, shape = [kernel size, kernel size, channels, kernel numbers]
 
     with tf.variable_scope('conv1') as scope:
         weights = tf.get_variable('weights',
@@ -99,7 +72,7 @@ def inference(images, batch_size, n_classes):
                                  initializer=tf.constant_initializer(0.1))
         local4 = tf.nn.relu(tf.matmul(local3, weights) + biases, name='local4')
 
-    # softmax
+
     with tf.variable_scope('softmax_linear') as scope:
         weights = tf.get_variable('softmax_linear',
                                   shape=[128, n_classes],
@@ -116,14 +89,7 @@ def inference(images, batch_size, n_classes):
 
 # %%
 def losses(logits, labels):
-    '''Compute loss from logits and labels
-    Args:
-        logits: logits tensor, float, [batch_size, n_classes]
-        labels: label tensor, tf.int32, [batch_size]
-        
-    Returns:
-        loss tensor of float type
-    '''
+
     with tf.variable_scope('loss') as scope:
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits \
             (logits=logits, labels=labels, name='xentropy_per_example')
@@ -132,17 +98,9 @@ def losses(logits, labels):
     return loss
 
 
-# %%
+
 def trainning(loss, learning_rate):
-    '''Training ops, the Op returned by this function is what must be passed to 
-        'sess.run()' call to cause the model to train.
-        
-    Args:
-        loss: loss tensor, from losses()
-        
-    Returns:
-        train_op: The op for trainning
-    '''
+
     with tf.name_scope('optimizer'):
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
         global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -152,15 +110,7 @@ def trainning(loss, learning_rate):
 
 # %%
 def evaluation(logits, labels):
-    """Evaluate the quality of the logits at predicting the label.
-    Args:
-      logits: Logits tensor, float - [batch_size, NUM_CLASSES].
-      labels: Labels tensor, int32 - [batch_size], with values in the
-        range [0, NUM_CLASSES).
-    Returns:
-      A scalar int32 tensor with the number of examples (out of batch_size)
-      that were predicted correctly.
-    """
+
     with tf.variable_scope('accuracy') as scope:
         correct = tf.nn.in_top_k(logits, labels, 1)
         correct = tf.cast(correct, tf.float16)
