@@ -10,7 +10,7 @@ import cv2
 NUM_CLASS = 2
 IMG_W = 208
 IMG_H = 208
-BATCH_SIZE = 16
+BATCH_SIZE = 10
 LEARNING_RATE = 0.0001
 MAX_STEP = 20000
 CAPACITY = 2000
@@ -29,10 +29,11 @@ def train():
         #show = cv2.imshow('test',train_image_batch[0])
         #wait = cv2.waitKeyEx()
 
-        logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
-        print(logits)
+        #logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
+
         # logits = model.inference(train_image_batch,batch_size=BATCH_SIZE,n_classes=NUM_CLASS)
-        # logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
+        logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
+        print(logits)
         loss = function.loss(logits=logits, labels=train_labels_batch)
         accuracy = function.accuracy(logits=logits, labels=train_labels_batch)
 
@@ -63,7 +64,7 @@ def train():
                 print('***** Step: %d, loss: %.4f, accuracy: %.4f%% *****' % (step, train_loss, train_accuracy))
                 summary_str = sess.run(summary_op)
                 tra_summary_writer.add_summary(summary_str, step)
-            if step % 2000 or step == MAX_STEP:
+            if step % 2000 == 0 or step == MAX_STEP:
                 checkpoint_path = os.path.join(train_log_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=step)
     except tf.errors.OutOfRangeError:
