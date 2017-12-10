@@ -65,17 +65,7 @@ def bytes_feature(value):
 # %%
 
 def convert_to_tfrecord(images, labels, save_dir, name):
-    '''convert all images and labels to one tfrecord file.
-    Args:
-        images: list of image directories, string type
-        labels: list of labels, int type
-        save_dir: the directory to save tfrecord file, e.g.: '/home/folder1/'
-        name: the name of tfrecord file, string type, e.g.: 'train'
-    Return:
-        no return
-    Note:
-        converting needs some time, be patient...
-    '''
+
 
     filename = os.path.join(save_dir, name + '.tfrecords')
     n_samples = len(labels)

@@ -1,7 +1,7 @@
 import re
 import linecache
 import os
-# 本程序用于将widerface数据集中label部分分离出来并且重新保存
+
 FILEDIR = "G:/baiduyun/faceresource/wider/wider_face_split/"
 FILEOUT = "G:/baiduyun/faceresource/wider/WIDER_train/images/"
 file = open(FILEDIR+'wider_face_train_bbx_gt.txt', 'r')

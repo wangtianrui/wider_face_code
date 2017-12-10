@@ -5,19 +5,7 @@ import numpy as np
 
 #%%
 def conv(layer_name, x, out_channels, kernel_size=[3,3], stride=[1,1,1,1], is_pretrain=True):
-    '''Convolution op wrapper, use RELU activation after convolution
-    Args:
-        layer_name: e.g. conv1, pool1...
-        x: input tensor, [batch_size, height, width, channels]
-        out_channels: number of output channels (or comvolutional kernels)
-        kernel_size: the size of convolutional kernel, VGG paper used: [3,3]
-        stride: A list of ints. 1-D of length 4. VGG paper used: [1, 1, 1, 1]
-        is_pretrain: if load pretrained parameters, freeze all conv layers. 
-        Depending on different situations, you can just set part of conv layers to be freezed.
-        the parameters of freezed layers will not change when training.
-    Returns:
-        4D tensor
-    '''
+
 
     in_channels = x.get_shape()[-1]
     with tf.variable_scope(layer_name):
@@ -36,16 +24,7 @@ def conv(layer_name, x, out_channels, kernel_size=[3,3], stride=[1,1,1,1], is_pr
 
 #%%
 def pool(layer_name, x, kernel=[1,2,2,1], stride=[1,2,2,1], is_max_pool=True):
-    '''Pooling op
-    Args:
-        x: input tensor
-        kernel: pooling kernel, VGG paper used [1,2,2,1], the size of kernel is 2X2
-        stride: stride size, VGG paper used [1,2,2,1]
-        padding:
-        is_max_pool: boolen
-                    if True: use max pooling
-                    else: use avg pooling
-    '''
+
     if is_max_pool:
         x = tf.nn.max_pool(x, kernel, strides=stride, padding='SAME', name=layer_name)
     else:
@@ -54,8 +33,7 @@ def pool(layer_name, x, kernel=[1,2,2,1], stride=[1,2,2,1], is_max_pool=True):
 
 #%%
 def batch_norm(x):
-    '''Batch normlization(I didn't include the offset and scale)
-    '''
+
     epsilon = 1e-3
     batch_mean, batch_var = tf.nn.moments(x, [0])
     x = tf.nn.batch_normalization(x,
@@ -68,12 +46,7 @@ def batch_norm(x):
 
 #%%
 def FC_layer(layer_name, x, out_nodes):
-    '''Wrapper for fully connected layers with RELU activation as default
-    Args:
-        layer_name: e.g. 'FC1', 'FC2'
-        x: input feature map
-        out_nodes: number of neurons for current FC layer
-    '''
+
     shape = x.get_shape()
     if len(shape) == 4:
         size = shape[1].value * shape[2].value * shape[3].value
@@ -108,11 +81,7 @@ def loss(logits, labels):
     
 #%%
 def accuracy(logits, labels):
-  """Evaluate the quality of the logits at predicting the label.
-  Args:
-    logits: Logits tensor, float - [batch_size, NUM_CLASSES].
-    labels: Labels tensor, 
-  """
+
   with tf.name_scope('accuracy') as scope:
       correct = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
       correct = tf.cast(correct, tf.float32)
@@ -124,10 +93,7 @@ def accuracy(logits, labels):
 
 #%%
 def num_correct_prediction(logits, labels):
-  """Evaluate the quality of the logits at predicting the label.
-  Return:
-      the number of correct predictions
-  """
+
   correct = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
   correct = tf.cast(correct, tf.int32)
   n_correct = tf.reduce_sum(correct)
@@ -137,8 +103,7 @@ def num_correct_prediction(logits, labels):
 
 #%%
 def optimize(loss, learning_rate, global_step):
-    '''optimization, use Gradient Descent as default
-    '''
+
     with tf.name_scope('optimizer'):
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
         #optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
@@ -186,14 +151,7 @@ def load_with_skip(data_path, session, skip_layer):
    
 #%%
 def print_all_variables(train_only=True):
-    """Print all trainable and non-trainable variables
-    without tl.layers.initialize_global_variables(sess)
 
-    Parameters
-    ----------
-    train_only : boolean
-        If True, only print the trainable variables, otherwise, print all variables.
-    """
     # tvar = tf.trainable_variables() if train_only else tf.all_variables()
     if train_only:
         t_vars = tf.trainable_variables()
@@ -220,15 +178,7 @@ def print_all_variables(train_only=True):
 
 #%%
 def weight(kernel_shape, is_uniform = True):
-    ''' weight initializer
-    Args:
-        shape: the shape of weight
-        is_uniform: boolen type.
-                if True: use uniform distribution initializer
-                if False: use normal distribution initizalizer
-    Returns:
-        weight tensor
-    '''
+
     w = tf.get_variable(name='weights',
                         shape=kernel_shape,
                         initializer=tf.contrib.layers.xavier_initializer())    
@@ -236,8 +186,7 @@ def weight(kernel_shape, is_uniform = True):
 
 #%%
 def bias(bias_shape):
-    '''bias initializer
-    '''
+
     b = tf.get_variable(name='biases',
                         shape=bias_shape,
                         initializer=tf.constant_initializer(0.0))
