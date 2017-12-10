@@ -2,7 +2,9 @@
 import tensorflow as tf
 
 
-
+"""
+两层卷积+池化，两层fc
+"""
 def inference(images, batch_size, n_classes):
 
     with tf.variable_scope('conv1') as scope:

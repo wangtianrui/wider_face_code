@@ -4,9 +4,10 @@ import numpy as np
 import function
 import alex_net
 import input
-import VGG
+import vgg_net
+import fcn_net
 import cv2
-import model
+import cifar_net
 NUM_CLASS = 2
 IMG_W = 208
 IMG_H = 208
@@ -30,8 +31,8 @@ def train():
         #wait = cv2.waitKeyEx()
 
         #logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
-
-        logits = model.inference(train_image_batch,batch_size=BATCH_SIZE,n_classes=NUM_CLASS)
+        #logits = fcn_net.fcn_net(train_image_batch,NUM_CLASS)
+        logits = cifar_net.inference(train_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS)
         #logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
         print(logits)
         loss = function.loss(logits=logits, labels=train_labels_batch)
