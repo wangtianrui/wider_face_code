@@ -99,11 +99,13 @@ for step in range(61):
         for k in range(j[0].shape[0]):  # 人头数
             if int(j[0][k][2]) <= 50 and int(j[0][k][3]) <= 50 or p[0][k] != 0:
                 continue
-            crop = img[int(j[0][k][1]):int(j[0][k][1]) + int(j[0][k][3]),
-                   int(j[0][k][0]):int(j[0][k][0]) + int(j[0][k][2])]
+            crop = img[int(j[0][k][1])+30:int(j[0][k][1]) + int(j[0][k][3]),
+                   int(j[0][k][0])+20:int(j[0][k][0]) + int(j[0][k][2])]
+            s=input('输入')
+            print(s)
             count += 1
             print("write")
-            filename = "F:/Traindata/facedata/activedata/" + str(count) + ".jpg"
+            filename = "F:/Traindata/eyes/" + str(count) + ".jpg"
             cv2.imwrite(filename, crop)
         print(step)
         print("writeok")
