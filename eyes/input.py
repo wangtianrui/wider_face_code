@@ -19,7 +19,7 @@ def read_and_decode_by_tfrecorder(tfrecords_file, batch_size, shuffle=True):
         })
     image = tf.decode_raw(img_features['image_raw'], tf.uint8)
     print(image)
-    image = tf.reshape(image, [24, 24, 3])
+    image = tf.reshape(image, [24, 24, 1])
     image = tf.cast(image, tf.float32)
     label = tf.cast(img_features['label'], tf.int32)
     if shuffle:

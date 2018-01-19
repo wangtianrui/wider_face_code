@@ -19,7 +19,7 @@ BATCH_SIZE = 33
 LEARNING_RATE = 0.0001
 MAX_STEP = 15000
 CAPACITY = 2000
-# testCifar10 = 'E:/python_programes/datas/cifar10/cifar-10-batches-bin/'
+#testCifar10 = 'E:/python_programes/datas/cifar10/cifar-10-batches-bin/'
 # TRAIN_PATH = 'F:/Traindata/faceTF/208x208(2).tfrecords'
 TRAIN_PATH = 'F:/Traindata/eyes/eyes.tfrecords'
 TEST_PATH = 'F:/Traindata/eyes/eyestest.tfrecords'
@@ -32,22 +32,21 @@ def train():
     with tf.name_scope('input'):
         # train_image_batch, train_labels_batch = input.read_cifar10(TRAIN_PATH, batch_size=BATCH_SIZE)
         train_image_batch, train_labels_batch = input.read_and_decode_by_tfrecorder(TRAIN_PATH, BATCH_SIZE)
-        test_image_batch, test_labels_batch = input.read_and_decode_by_tfrecorder(TEST_PATH, BATCH_SIZE)
+        test_image_batch,test_labels_batch = input.read_and_decode_by_tfrecorder(TEST_PATH,BATCH_SIZE)
         print(train_image_batch)
         print(train_labels_batch)
         # show = cv2.imshow('test',train_image_batch[0])
         # wait = cv2.waitKeyEx()
 
-        # logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
+        #logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
         # logits = fcn_net.fcn_net(train_image_batch,NUM_CLASS)
-        logits = cifar_net.inference(train_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS, name="train")
+        logits = cifar_net.inference(train_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS,name="train")
         # logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
-        # logits = mnistnet.net(train_image_batch,num_class=NUM_CLASS)
+        #logits = mnistnet.net(train_image_batch,num_class=NUM_CLASS)
         print(logits)
         loss = function.loss(logits=logits, labels=train_labels_batch)
-        accuracy_logits = cifar_net.inference(test_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS, name="test")
-        accuracy_test = function.accuracy(logits=accuracy_logits, labels=test_labels_batch)
-        accuracy_train = function.accuracy(logits=logits, labels=train_labels_batch)
+        accuracy_logits = cifar_net.inference(test_image_batch,batch_size=BATCH_SIZE,n_classes=NUM_CLASS,name="test")
+        accuracy = function.accuracy(logits=accuracy_logits, labels=test_labels_batch)
 
         my_global_step = tf.Variable(0, name='global_step')
         train_op = function.optimize(loss=loss, learning_rate=LEARNING_RATE, global_step=my_global_step)
@@ -70,15 +69,14 @@ def train():
             if coord.should_stop():
                 break
 
-            _, train_loss, test_accuracy, train_accuracy = sess.run([train_op, loss, accuracy_test, accuracy_train ])
-            # print('***** Step: %d, loss: %.4f *****' % (step, train_loss))
+            _, train_loss, train_accuracy = sess.run([train_op, loss, accuracy])
+            #print('***** Step: %d, loss: %.4f *****' % (step, train_loss))
             if (step % 50 == 0) or (step == MAX_STEP):
                 print('***** Step: %d, loss: %.4f' % (step, train_loss))
                 summary_str = sess.run(summary_op)
                 tra_summary_writer.add_summary(summary_str, step)
             if (step % 200 == 0) or (step == MAX_STEP):
-                print('***** Step: %d, loss: %.4f, test Set accuracy: %.4f%% ,train Set accuracy: %.4f%% *****'
-                      % (step, train_loss, test_accuracy, train_accuracy))
+                print('***** Step: %d, loss: %.4f, accuracy: %.4f%% *****' % (step, train_loss, train_accuracy))
                 summary_str = sess.run(summary_op)
                 tra_summary_writer.add_summary(summary_str, step)
             if step % 2000 == 0 or step == MAX_STEP:
