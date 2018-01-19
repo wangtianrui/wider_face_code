@@ -79,7 +79,6 @@ for step in range(61):
     # i遍历FileName[step][0],j遍历FileValue[step][0]，p遍历FileOcc[step][0]
     for (i, j, p) in zip(FileName[step][0], FileValue[step][0], FileOcc[step][0]):
         # print("test4", step)
-        #
         #print("THE k is", step)
         newstring = FindAddress(step)
         #print("findAddok")

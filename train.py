@@ -30,9 +30,9 @@ def train():
         #show = cv2.imshow('test',train_image_batch[0])
         #wait = cv2.waitKeyEx()
 
-        #logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
-        #logits = fcn_net.fcn_net(train_image_batch,NUM_CLASS)
-        logits = cifar_net.inference(train_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS)
+        logits = alex_net.alex_net(train_image_batch, NUM_CLASS)
+        # logits = fcn_net.fcn_net(train_image_batch,NUM_CLASS)
+        #logits = cifar_net.inference(train_image_batch, batch_size=BATCH_SIZE, n_classes=NUM_CLASS)
         #logits = VGG.VGG16N(train_image_batch,n_classes=NUM_CLASS,is_pretrain=False)
         print(logits)
         loss = function.loss(logits=logits, labels=train_labels_batch)

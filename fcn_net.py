@@ -19,5 +19,5 @@ def fcn_net(image, num_class):  # image:[227,227,3]
             pool2 = function.pool(norm2, kernel=[1, 3, 3, 1], stride=[1, 2, 2, 1], name='pool2', padding='VALID')
             print(pool2)
         with tf.name_scope('cnov_final'):
-            softmax_linear = function.conv(pool2,kernel_size=[1,51,51,1],stride=[1,1,1,1],name='out',padding='VALID')
+            softmax_linear = function.conv(pool2,kernel_size=[1,51,51,1],stride=[1,1,1,1],out_channels=16,name='out',padding='VALID')
         return softmax_linear

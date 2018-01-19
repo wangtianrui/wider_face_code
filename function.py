@@ -8,10 +8,10 @@ def conv(input_image, kernel_size, stride, out_channels, name, padding):
     with tf.variable_scope(name):
         w = tf.get_variable(name='weights',
                             shape=[kernel_size[0], kernel_size[1], input_channels, out_channels],
-                            initializer=tf.contrib.layers.xavier_initializer())
+                            initializer=tf.truncated_normal_initializer(stddev=0.1,dtype=tf.float32))
         b = tf.get_variable(name='biases',
                             shape=[out_channels],
-                            initializer=tf.constant_initializer())
+                            initializer=tf.constant_initializer(0.1))
         x = tf.nn.conv2d(input_image, w, stride, padding=padding, name='conv')
         x = tf.nn.bias_add(x, b, name='bias_add')
         x = tf.nn.relu(x, name='relu')

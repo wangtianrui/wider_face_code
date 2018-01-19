@@ -1,12 +1,11 @@
-
 import tensorflow as tf
-
 
 """
 两层卷积+池化，两层fc
 """
-def inference(images, batch_size, n_classes):
 
+
+def inference(images, batch_size, n_classes):
     with tf.variable_scope('conv1') as scope:
         weights = tf.get_variable('weights',
                                   shape=[3, 3, 3, 16],
@@ -74,7 +73,6 @@ def inference(images, batch_size, n_classes):
                                  initializer=tf.constant_initializer(0.1))
         local4 = tf.nn.relu(tf.matmul(local3, weights) + biases, name='local4')
 
-
     with tf.variable_scope('softmax_linear') as scope:
         weights = tf.get_variable('softmax_linear',
                                   shape=[128, n_classes],
@@ -91,7 +89,6 @@ def inference(images, batch_size, n_classes):
 
 # %%
 def losses(logits, labels):
-
     with tf.variable_scope('loss') as scope:
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits \
             (logits=logits, labels=labels, name='xentropy_per_example')
@@ -100,9 +97,7 @@ def losses(logits, labels):
     return loss
 
 
-
 def trainning(loss, learning_rate):
-
     with tf.name_scope('optimizer'):
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
         global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -112,7 +107,6 @@ def trainning(loss, learning_rate):
 
 # %%
 def evaluation(logits, labels):
-
     with tf.variable_scope('accuracy') as scope:
         correct = tf.nn.in_top_k(logits, labels, 1)
         correct = tf.cast(correct, tf.float16)
